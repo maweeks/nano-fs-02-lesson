@@ -1,6 +1,7 @@
 #
 # Database access functions for the web forum.
 # 
+import bleach
 import psycopg2
 import time
 
@@ -26,10 +27,10 @@ def AddPost(content):
     Args:
       content: The text content of the new post.
     '''
-    print("asdf")
+    content = bleach.linkify(bleach.clean(content))
     DB = psycopg2.connect("dbname=forum")
     c = DB.cursor()
-    c.execute("INSERT INTO posts (content) VALUES ('%s')" % content)
+    c.execute("INSERT INTO posts (content) VALUES (%s)",(content,))
     DB.commit()
     DB.close()
     
